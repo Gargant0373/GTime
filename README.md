@@ -10,3 +10,40 @@ The *sql* field can be ignored in case you're using yml. You'll need to fill in 
 
 ## Contributing
 These plugins are made open-source and free to use so any help is appreciated. If you want to contribute feel free to create a pull request. Not respecting the Java standards or having a poor code quality might lead to your PR being rejected. 
+
+## API
+In order to use the API make sure to add the dependency.
+[![](https://jitpack.io/v/Gargant0373/GTime.svg)](https://jitpack.io/#Gargant0373/GTime)
+
+To start using the API you'll need a reference to the GTimeAPI.
+
+```java
+GTimeAPI api = GTime.api();
+```
+
+To start a run for someone you can use the **RunService** instance from the api. Let's say you'd like someone to start the run when breaking a block.
+*(NOTE! You can implement this in any context, this is just an example)*
+
+```java
+@EventHandler
+public  void  onBlockBreak(BlockBreakEvent  event)  {
+Player  player  =  event.getPlayer();
+
+// getRunService() returns a RunService instance
+api.getRunService().startRun(player.getUniqueId(),  "myCoolMapName");
+// startRun takes 2 parameters- the player unique id and the map name
+}
+```
+
+In order to end someone's run you can use the end run method from the RunService.
+
+The end run method returns a **RunEnd** object. This object contains the name of the map, the current time and the previous time the player had. It also has a built-in message broadcast method called `broadcastEndMessage`.
+
+See an example of how to broadcast the message and implement a run end:
+
+```java
+// the end run method takes one parameter,
+// the unique id of the player
+RunEnd run = api.getRunService().endRun(player.getUniqueId());
+run.broadcastMessage(player);
+```
