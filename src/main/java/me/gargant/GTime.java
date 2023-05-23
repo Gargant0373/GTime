@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import masecla.mlib.main.MLib;
 import me.gargant.commands.DebugCommand;
 import me.gargant.commands.GTimeCommand;
+import me.gargant.containers.MapViewContainer;
 import me.gargant.data.DataRepository;
 import me.gargant.data.SQLRepository;
 import me.gargant.data.YMLRepository;
@@ -27,6 +28,8 @@ public class GTime extends JavaPlugin {
 
         new DebugCommand(lib, dataRepository).register();
         new GTimeCommand(lib, runService).register();
+
+        new MapViewContainer(lib, dataRepository).register();
 
         this.disableAntispam();
     }

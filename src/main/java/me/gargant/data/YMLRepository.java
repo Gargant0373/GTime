@@ -38,18 +38,20 @@ public class YMLRepository implements DataRepository {
     @Override
     public Time getTime(UUID uuid, String map) {
         ConfigurationSection section = getSection(uuid).getConfigurationSection(map);
-        if(section == null) return null;
+        if (section == null)
+            return null;
         return new Time(map, section.getLong("time"), section.getLong("logged"));
     }
 
     @Override
     public List<Time> getAllTimes(UUID uuid) {
         ConfigurationSection section = getSection(uuid);
-        if(section == null) return new ArrayList<>();
+        if (section == null)
+            return new ArrayList<>();
         Set<String> registeredMaps = section.getKeys(false);
         List<Time> times = new ArrayList<>();
         for (String map : registeredMaps)
-            times.add(new Time(map, section.getLong("time"), section.getLong("logged")));
+            times.add(new Time(map, section.getLong(map + ".time"), section.getLong(map + ".logged")));
         return times;
     }
 

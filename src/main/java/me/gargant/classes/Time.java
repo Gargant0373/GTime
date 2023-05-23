@@ -1,5 +1,8 @@
 package me.gargant.classes;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -26,5 +29,11 @@ public class Time {
 
         return (h == 0 ? "" : (h > 10 ? h : "0" + h) + ":") + "" + (m > 10 ? m : "0" + m) +
             ":" + (s > 10 ? s : "0" + s) + "." + ms;
+    }
+
+    public String getLogTimeString() {
+        Date date = new Date(logged);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm");
+        return dateFormat.format(date);
     }
 }

@@ -9,6 +9,7 @@ import masecla.mlib.classes.Registerable;
 import masecla.mlib.classes.Replaceable;
 import masecla.mlib.main.MLib;
 import me.gargant.classes.RunEnd;
+import me.gargant.containers.MapViewContainer;
 import me.gargant.services.RunService;
 
 @RegisterableInfo(command = "gtime")
@@ -29,11 +30,17 @@ public class GTimeCommand extends Registerable {
                     new Replaceable("%time%", end.toString()), new Replaceable("%player_name%", player.getName()));
 
         if (end.isRecord())
-            lib.getMessagesAPI().sendMessage("times.personal-best", player, true, new Replaceable("%time%", end.getReadeableDifference()));
+            lib.getMessagesAPI().sendMessage("times.personal-best", player, true,
+                    new Replaceable("%time%", end.getReadeableDifference()));
     }
 
     @SubcommandInfo(subcommand = "start", permission = "gtime.use")
     public void handleStart(Player player, String map) {
         runService.startRun(player.getUniqueId(), map);
+    }
+
+    @SubcommandInfo(subcommand = "times", permission = "gtime.times")
+    public void handleTimes(Player player) {
+        lib.getContainerAPI().openFor(player, MapViewContainer.class);
     }
 }
