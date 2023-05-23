@@ -24,14 +24,21 @@ public class GTime extends JavaPlugin {
         new DebugCommand(lib, dataRepository).register();
     }
 
+    @Override
+    public void onDisable() {
+        this.dataRepository.closeConnection();
+    }
+
     private void registerRepository() {
         String type = lib.getConfigurationAPI().getConfig().getString("database", "null");
         switch(type) {
             case "sql":
                 this.dataRepository = new SQLRepository(lib);
+                lib.getLoggerAPI().information("Using SQL database.");
                 break;
             case "yml":
                 this.dataRepository = new YMLRepository(lib);
+                lib.getLoggerAPI().information("Using YML database.");
                 break;
             default:
                 lib.getLoggerAPI().error("Invalid data type: " + type);
