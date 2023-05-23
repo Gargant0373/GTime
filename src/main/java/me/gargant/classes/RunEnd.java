@@ -15,7 +15,7 @@ public class RunEnd {
      * @return
      */
     public boolean isRecord() {
-        return previousTime == null || previousTime < time;
+        return previousTime == null || previousTime > time;
     }
 
     /**

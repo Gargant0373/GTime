@@ -38,8 +38,7 @@ public class YMLRepository implements DataRepository {
     @Override
     public Time getTime(UUID uuid, String map) {
         ConfigurationSection section = getSection(uuid).getConfigurationSection(map);
-        if (section == null || !section.contains(map))
-            return null;
+        if(section == null) return null;
         return new Time(map, section.getLong("time"), section.getLong("logged"));
     }
 

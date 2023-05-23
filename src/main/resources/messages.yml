@@ -1,5 +1,8 @@
-prefix: "&7[&cGTime&7] "
+prefix: "&c&lG&e&lTime &7\u007C "
 messages:
   plugin:
     only-player: "&cYou need to be a player to do that!"
     no-permission: "&cYou are not allowed to do that!"
+    times:
+      personal-best: "&6&lPB! &aYou've beat your previous personal best by &f%time%&a!"
+      finished: "&e%player_name% &afinished &b&l%map% &ain &f%time%&a!"

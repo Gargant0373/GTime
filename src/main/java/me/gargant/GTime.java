@@ -27,6 +27,13 @@ public class GTime extends JavaPlugin {
 
         new DebugCommand(lib, dataRepository).register();
         new GTimeCommand(lib, runService).register();
+
+        this.disableAntispam();
+    }
+
+    private void disableAntispam() {
+        lib.getMessagesAPI().setAntispamDelay("times.personal-best", 0);
+        lib.getMessagesAPI().setAntispamDelay("times.finished", 0);
     }
 
     @Override
