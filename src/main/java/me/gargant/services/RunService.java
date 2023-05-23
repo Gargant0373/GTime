@@ -58,7 +58,7 @@ public class RunService {
         if (previousTime == null || previousTime.getTime() > time.getTime())
             dataRepository.saveTime(uuid, time);
 
-        return new RunEnd(time.getMap(), time.getTime(), previousTime == null ? null : previousTime.getTime());
+        return new RunEnd(lib, time.getMap(), time.getTime(), previousTime == null ? null : previousTime.getTime());
     }
 
     /**

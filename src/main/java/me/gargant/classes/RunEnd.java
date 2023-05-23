@@ -1,17 +1,26 @@
 package me.gargant.classes;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-@Data
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import masecla.mlib.classes.Replaceable;
+import masecla.mlib.main.MLib;
+
 @AllArgsConstructor
 public class RunEnd {
+    private MLib lib;
+    @Getter
     private String map;
+    @Getter
     private Long time;
+    @Getter
     private Long previousTime;
 
     /**
      * Returns whether or not the current time is faster than the previous time.
+     * 
      * @return
      */
     public boolean isRecord() {
@@ -43,5 +52,15 @@ public class RunEnd {
 
         return (h == 0 ? "" : (h > 10 ? h : "0" + h) + ":") + "" + (m > 10 ? m : "0" + m) + ":" + (s > 10 ? s : "0" + s)
                 + "." + ms + " " + (isRecord() ? "faster" : "slower");
+    }
+
+    public void broadcastEndMessage(Player player) {
+        for (Player p : Bukkit.getOnlinePlayers())
+            lib.getMessagesAPI().sendMessage("times.finished", p, true, new Replaceable("%map%", this.getMap()),
+                    new Replaceable("%time%", this.toString()), new Replaceable("%player_name%", player.getName()));
+
+        if (this.isRecord())
+            lib.getMessagesAPI().sendMessage("times.personal-best", player, true,
+                    new Replaceable("%time%", this.getReadeableDifference()));
     }
 }
