@@ -17,7 +17,6 @@ public class DebugCommand extends Registerable {
     @Override
     public void register() {
         super.register();
-        System.out.println("Hello world!");
     }
 
     public DebugCommand(MLib lib, DataRepository dataRepository) {
