@@ -5,4 +5,6 @@ main: me.gargant.GTime
 api-version: 1.13
 commands:
   gdebug:
-    usage: /<command>
+    usage: /gdebug
+  gtime:
+    usage: /gtime

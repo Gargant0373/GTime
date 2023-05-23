@@ -4,15 +4,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import masecla.mlib.main.MLib;
 import me.gargant.commands.DebugCommand;
+import me.gargant.commands.GTimeCommand;
 import me.gargant.data.DataRepository;
 import me.gargant.data.SQLRepository;
 import me.gargant.data.YMLRepository;
+import me.gargant.services.RunService;
 
 public class GTime extends JavaPlugin {
     
     private MLib lib;
 
     private DataRepository dataRepository;
+    private RunService runService;
 
     @Override
     public void onEnable() {
@@ -20,8 +23,10 @@ public class GTime extends JavaPlugin {
         this.lib.getConfigurationAPI().requireAll();
 
         this.registerRepository();
+        this.runService = new RunService(lib, dataRepository);
 
         new DebugCommand(lib, dataRepository).register();
+        new GTimeCommand(lib, runService).register();
     }
 
     @Override
