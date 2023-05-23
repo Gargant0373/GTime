@@ -1,0 +1,21 @@
+##################################################################
+#                - GTime Configuration File-                     #
+#   errors caused by incorrect configuration will be ignored     #
+#            author: https://github.com/Gargant0373              #
+##################################################################
+
+
+#   Database can be either 'sql' or 'yml'. 
+#   In order to save the data cross-server you must use 'sql', 'yml' will only work
+# locally, on a single server.
+database: sql
+
+#   If you are using 'yml' as your database ignore this section.
+#   Make sure to fill the database data correctly in and make sure
+# the database exists (must be manually created).
+sql: 
+  host: localhost
+  port: 3306
+  database: gtimes
+  username: root
+  password: ''

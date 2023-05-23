@@ -1,0 +1,8 @@
+name: GTime
+version: ${version}
+author: Gargant
+main: me.gargant.GTime
+api-version: 1.13
+commands:
+  gdebug:
+    usage: /<command>

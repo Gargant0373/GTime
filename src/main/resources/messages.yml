@@ -1,0 +1,5 @@
+prefix: "&7[&cGTime&7] "
+messages:
+  plugin:
+    only-player: "&cYou need to be a player to do that!"
+    no-permission: "&cYou are not allowed to do that!"
