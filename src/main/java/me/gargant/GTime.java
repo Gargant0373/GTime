@@ -3,6 +3,7 @@ package me.gargant;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import masecla.mlib.main.MLib;
+import me.gargant.classes.GTimeAPI;
 import me.gargant.commands.DebugCommand;
 import me.gargant.commands.GTimeCommand;
 import me.gargant.containers.MapViewContainer;
@@ -18,6 +19,8 @@ public class GTime extends JavaPlugin {
     private DataRepository dataRepository;
     private RunService runService;
 
+    private static GTimeAPI api;
+
     @Override
     public void onEnable() {
         this.lib = new MLib(this);
@@ -31,7 +34,13 @@ public class GTime extends JavaPlugin {
 
         new MapViewContainer(lib, dataRepository).register();
 
+        api = new GTimeAPI(dataRepository, runService); 
+
         this.disableAntispam();
+    }
+
+    public static GTimeAPI api() {
+        return api;
     }
 
     private void disableAntispam() {

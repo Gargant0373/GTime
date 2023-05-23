@@ -9,6 +9,7 @@ public interface DataRepository {
     
     /**
      * Initializes the repository. This method should be called before any other method.
+     * Plugin handles initialization and database connection closing itself.
      */
     public void initialize();
     /**
