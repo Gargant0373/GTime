@@ -27,6 +27,8 @@ public class RunService extends Registerable {
 
     private int taskId = -1;
     private Map<UUID, Time> running = new HashMap<>();
+    /* Cache the previous times when running. */
+    private Map<UUID, Time> previousTimes = new HashMap<>();
 
     private int startTask() {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(lib.getPlugin(), () -> running.forEach(this::sendMessage), 0,
@@ -37,12 +39,14 @@ public class RunService extends Registerable {
         if (taskId == -1)
             taskId = startTask();
         running.put(uuid, new Time(map, System.currentTimeMillis()));
+        previousTimes.put(uuid, dataRepository.getTime(uuid, map));
     }
 
     public RunEnd endRun(UUID uuid) {
         Time time = running.get(uuid);
         time.setTime(System.currentTimeMillis() - time.getTime());
         running.remove(uuid);
+        previousTimes.remove(uuid);
 
         if (running.isEmpty()) {
             Bukkit.getScheduler().cancelTask(taskId);
@@ -59,6 +63,7 @@ public class RunService extends Registerable {
     @EventHandler
     public void onQuit(PlayerQuitEvent ev) {
         this.running.remove(ev.getPlayer().getUniqueId());
+        this.previousTimes.remove(ev.getPlayer().getUniqueId());
     }
 
     /**
@@ -90,7 +95,7 @@ public class RunService extends Registerable {
         // Make the seconds and minutes be padded with
         // 0s and displayed in the mm:ss format
         String timeFormatted = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
-        Time previousTime = dataRepository.getTime(uuid, t.getMap());
+        Time previousTime = previousTimes.get(uuid);
         String previousTimeFormatted = previousTime == null ? "N/A" : previousTime.toString();
         lib.getMessagesAPI().sendActionbarMessage(
                 "&f" + previousTimeFormatted + " " + generateCircles(diff, previousTime) + " " + " &f" + timeFormatted,
