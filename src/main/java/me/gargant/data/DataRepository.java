@@ -29,6 +29,11 @@ public interface DataRepository {
      * @return the {@link Time} on the map or null.
      */
     public Time getTime(UUID uuid, String map);
+    /**
+     * Gets all times from the repository.
+     * @param uuid the {@link UUID} of the player.
+     * @return a {@link List} of {@link Time} objects.
+     */
     public List<Time> getAllTimes(UUID uuid);
 
 }
