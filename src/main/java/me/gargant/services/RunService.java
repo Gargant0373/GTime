@@ -28,9 +28,6 @@ public class RunService {
 
     private int startTask() {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(lib.getPlugin(), () -> {
-            for (UUID uuid : running.keySet())
-                if (Bukkit.getPlayer(uuid) == null)
-                    running.remove(uuid);
             running.forEach((c, v) -> {
                 String message = generateMessage(c, v);
                 lib.getMessagesAPI().sendActionbarMessage(message, Bukkit.getPlayer(c));
@@ -62,12 +59,22 @@ public class RunService {
     }
 
     /**
+     * This method does not handle any database time logic.
+     * 
+     * @param uuid the {@link UUID} of the player to remove.
+     */
+    public void removeRunning(UUID uuid) {
+        running.remove(uuid);
+    }
+
+    /**
      * Calculates the amount of gray and green circles for the action bar message.
      */
     private String generateCircles(long time, Time previousTime) {
         long previousTimeValue = previousTime == null ? 1 : previousTime.getTime() / 1000;
         int greenCircles = Math.round(previousTime == null ? 0 : NUMBER_OF_CIRCLES * time / previousTimeValue);
-        if(greenCircles > NUMBER_OF_CIRCLES) greenCircles = NUMBER_OF_CIRCLES;
+        if (greenCircles > NUMBER_OF_CIRCLES)
+            greenCircles = NUMBER_OF_CIRCLES;
         int grayCircles = NUMBER_OF_CIRCLES - greenCircles;
         String circles = "";
 
@@ -75,7 +82,7 @@ public class RunService {
             circles += "&a\u2B24";
         for (int i = 0; i < grayCircles; i++)
             circles += "&7\u2B24";
-        
+
         return circles;
     }
 
@@ -91,6 +98,6 @@ public class RunService {
         String timeFormatted = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
         Time previousTime = dataRepository.getTime(uuid, t.getMap());
         String previousTimeFormatted = previousTime == null ? "N/A" : previousTime.toString();
-        return  "&f" + previousTimeFormatted + " " + generateCircles(diff, previousTime) + " " + " &f" + timeFormatted;
+        return "&f" + previousTimeFormatted + " " + generateCircles(diff, previousTime) + " " + " &f" + timeFormatted;
     }
 }

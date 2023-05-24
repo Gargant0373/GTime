@@ -126,7 +126,8 @@ public class SQLRepository implements DataRepository {
 
         List<Time> times = new ArrayList<>();
 
-        String query = "SELECT * FROM " + uuid.toString();
+        // Kill me for this, I will switch to 2 primary keys l8r on.
+        String query = "SELECT * FROM " + uuid.toString().replace("-", "");
 
         try {
             PreparedStatement statement = (PreparedStatement) connection.prepareStatement(query);
