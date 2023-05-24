@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 
 import lombok.AllArgsConstructor;
+import masecla.mlib.classes.MamlConfiguration;
 import masecla.mlib.main.MLib;
 import me.gargant.classes.Time;
 
@@ -28,10 +29,10 @@ public class YMLRepository implements DataRepository {
 
     @Override
     public void saveTime(UUID uuid, Time time) {
-        lib.getConfigurationAPI().getConfig("data")
-                .set(uuid.toString().replace("-", "") + "." + time.getMap() + ".time", time.getTime());
-        lib.getConfigurationAPI().getConfig("data")
-                .set(uuid.toString().replace("-", "") + "." + time.getMap() + ".logged", System.currentTimeMillis());
+        MamlConfiguration config = lib.getConfigurationAPI().getConfig("data");
+        String path = uuid.toString().replace("-", "") + "." + time.getMap();
+        config.set(path + ".time", time.getTime());
+        config.set(path + ".logged", System.currentTimeMillis());
         lib.getConfigurationAPI().saveConfig("data");
     }
 
