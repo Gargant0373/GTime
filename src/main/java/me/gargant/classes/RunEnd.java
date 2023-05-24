@@ -55,9 +55,10 @@ public class RunEnd {
     }
 
     public void broadcastEndMessage(Player player) {
+        Replaceable[] replaceables = new Replaceable[] { new Replaceable("%map%", this.getMap()),
+                new Replaceable("%time%", this.toString()), new Replaceable("%player_name%", player.getName()) };
         for (Player p : Bukkit.getOnlinePlayers())
-            lib.getMessagesAPI().sendMessage("times.finished", p, true, new Replaceable("%map%", this.getMap()),
-                    new Replaceable("%time%", this.toString()), new Replaceable("%player_name%", player.getName()));
+            lib.getMessagesAPI().sendMessage("times.finished", p, true, replaceables);
 
         if (this.isRecord())
             lib.getMessagesAPI().sendMessage("times.personal-best", player, true,

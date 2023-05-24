@@ -5,21 +5,23 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import masecla.mlib.classes.Registerable;
 import masecla.mlib.main.MLib;
 import me.gargant.classes.RunEnd;
 import me.gargant.classes.Time;
 import me.gargant.data.DataRepository;
 
-@RequiredArgsConstructor
-public class RunService {
-
-    @NonNull
-    private MLib lib;
-    @NonNull
+public class RunService extends Registerable {
+    
     private DataRepository dataRepository;
+
+    public RunService(MLib lib, DataRepository dataRepository) {
+        super(lib);
+        this.dataRepository = dataRepository;
+    }
 
     private int NUMBER_OF_CIRCLES = 10;
 
@@ -58,13 +60,9 @@ public class RunService {
         return new RunEnd(lib, time.getMap(), time.getTime(), previousTime == null ? null : previousTime.getTime());
     }
 
-    /**
-     * This method does not handle any database time logic.
-     * 
-     * @param uuid the {@link UUID} of the player to remove.
-     */
-    public void removeRunning(UUID uuid) {
-        running.remove(uuid);
+    @EventHandler
+    public void onQuit(PlayerQuitEvent ev) {
+        this.running.remove(ev.getPlayer().getUniqueId());
     }
 
     /**

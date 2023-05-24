@@ -28,6 +28,7 @@ public class GTime extends JavaPlugin {
 
         this.registerRepository();
         this.runService = new RunService(lib, dataRepository);
+        this.runService.register();
 
         new DebugCommand(lib, dataRepository).register();
         new GTimeCommand(lib, runService).register();
