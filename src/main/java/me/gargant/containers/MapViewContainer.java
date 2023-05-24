@@ -1,7 +1,7 @@
 package me.gargant.containers;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import masecla.mlib.classes.builders.ItemBuilder;
 import masecla.mlib.containers.generic.PagedContainer;
 import masecla.mlib.main.MLib;
-import me.gargant.classes.Time;
 import me.gargant.data.DataRepository;
 import net.md_5.bungee.api.ChatColor;
 
@@ -38,14 +37,13 @@ public class MapViewContainer extends PagedContainer {
 
     @Override
     public List<ItemStack> getOrderableItems(Player player) {
-        List<Time> times = dataRepository.getAllTimes(player.getUniqueId());
-        Collections.sort(times, (a, b) -> a.getMap().compareTo(b.getMap()));
-        return times.stream().map(c -> {
-            ItemBuilder builder = new ItemBuilder(Material.MAP);
-            builder.name("&e" + c.getMap()).lore("", "&f&lTIME", "&e" + c.toString(), "", "&f&lACHIEVED",
-                    "&e" + c.getLogTimeString());
-            return builder.build(lib);
-        }).collect(Collectors.toList());
+        return dataRepository.getAllTimes(player.getUniqueId()).stream().sorted(Comparator.comparing(a -> a.getMap()))
+                .map(c -> {
+                    ItemBuilder builder = new ItemBuilder(Material.MAP);
+                    builder.name("&e" + c.getMap()).lore("", "&f&lTIME", "&e" + c.toString(), "", "&f&lACHIEVED",
+                            "&e" + c.getLogTimeString());
+                    return builder.build(lib);
+                }).collect(Collectors.toList());
     }
 
     @Override
