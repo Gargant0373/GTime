@@ -32,8 +32,10 @@ public class SQLRepository implements DataRepository {
 
         try {
             this.connection = DriverManager.getConnection(
-                "jdbc:mysql://" + host + ":" + port + "/" + name, username, password);
+                    "jdbc:mysql://" + host + ":" + port + "/" + name, username, password);
+            this.createTable();
             this.initialized = true;
+            lib.getLoggerAPI().information("SQL Connection initialized.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,24 +51,12 @@ public class SQLRepository implements DataRepository {
     }
 
     /**
-     * Creates a table for the player if it doesn't exist.
-     * @param uuid the {@link UUID} of the player.
+     * Creates a table for the times if it doesn't exist.
      */
-    private void createTable(UUID uuid) {
-        if (!initialized) {
-            lib.getLoggerAPI().error("SQL not initialized. Cancelling request for table creation.");
-            return;
-        }
+    private void createTable() throws SQLException {
+        String query = "CREATE TABLE IF NOT EXISTS times (uuid VARCHAR(36), map VARCHAR(255), time BIGINT, logged BIGINT, PRIMARY KEY (uuid, map), INDEX idx_uuid (uuid))";
 
-        String query = "CREATE TABLE IF NOT EXISTS " + uuid.toString().replace("-", "")
-                + " (map VARCHAR(255) UNIQUE PRIMARY KEY, time BIGINT, logged BIGINT)";
-
-        try {
-            connection.prepareStatement(query).executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        connection.prepareStatement(query).executeUpdate();
     }
 
     @Override
@@ -76,15 +66,14 @@ public class SQLRepository implements DataRepository {
             return;
         }
 
-        createTable(uuid);
-
-        String query = "REPLACE INTO " + uuid.toString().replace("-", "") + " (map, time, logged) VALUES (?, ?, ?)";
+        String query = "REPLACE INTO times (uuid, map, time, logged) VALUES (?, ?, ?, ?)";
 
         try {
             PreparedStatement statement = (PreparedStatement) connection.prepareStatement(query);
-            statement.setString(1, time.getMap());
-            statement.setLong(2, time.getTime());
-            statement.setLong(3, System.currentTimeMillis());
+            statement.setString(1, uuid.toString());
+            statement.setString(2, time.getMap());
+            statement.setLong(3, time.getTime());
+            statement.setLong(4, System.currentTimeMillis());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,13 +87,12 @@ public class SQLRepository implements DataRepository {
             return null;
         }
 
-        createTable(uuid);
-
-        String query = "SELECT time FROM " + uuid.toString().replace("-", "") + " WHERE map = ?";
+        String query = "SELECT * FROM times WHERE uuid = ? AND map = ?";
 
         try {
             PreparedStatement statement = (PreparedStatement) connection.prepareStatement(query);
-            statement.setString(1, map);
+            statement.setString(1, uuid.toString());
+            statement.setString(2, map);
             ResultSet set = statement.executeQuery();
             if (set.next()) {
                 return new Time(map, set.getLong("time"), set.getLong("logged"));
@@ -122,15 +110,13 @@ public class SQLRepository implements DataRepository {
             return null;
         }
 
-        createTable(uuid);
-
         List<Time> times = new ArrayList<>();
 
-        // Kill me for this, I will switch to 2 primary keys l8r on.
-        String query = "SELECT * FROM " + uuid.toString().replace("-", "");
+        String query = "SELECT * FROM times WHERE uuid = ?";
 
         try {
             PreparedStatement statement = (PreparedStatement) connection.prepareStatement(query);
+            statement.setString(1, uuid.toString());
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 String map = set.getString("map");

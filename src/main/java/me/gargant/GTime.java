@@ -70,7 +70,8 @@ public class GTime extends JavaPlugin {
                 lib.getLoggerAPI().error("Valid types are: sql, yml");
                 lib.getLoggerAPI().error("Disabling plugin.");
                 this.setEnabled(false);
-                break;
+                return;
         }
+        this.dataRepository.initialize();
     }
 }
