@@ -15,7 +15,7 @@ import me.gargant.classes.Time;
 import me.gargant.data.DataRepository;
 
 public class RunService extends Registerable {
-    
+
     private DataRepository dataRepository;
 
     public RunService(MLib lib, DataRepository dataRepository) {
@@ -29,12 +29,8 @@ public class RunService extends Registerable {
     private Map<UUID, Time> running = new HashMap<>();
 
     private int startTask() {
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(lib.getPlugin(), () -> {
-            running.forEach((c, v) -> {
-                String message = generateMessage(c, v);
-                lib.getMessagesAPI().sendActionbarMessage(message, Bukkit.getPlayer(c));
-            });
-        }, 0, 20);
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(lib.getPlugin(), () -> running.forEach(this::sendMessage), 0,
+                20);
     }
 
     public void startRun(UUID uuid, String map) {
@@ -87,7 +83,7 @@ public class RunService extends Registerable {
     /**
      * Generates the action bar message for the running player
      */
-    private String generateMessage(UUID uuid, Time t) {
+    private void sendMessage(UUID uuid, Time t) {
         long diff = (System.currentTimeMillis() - t.getTime()) / 1000;
         long m = diff / 60;
         long s = diff - m * 60;
@@ -96,6 +92,8 @@ public class RunService extends Registerable {
         String timeFormatted = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
         Time previousTime = dataRepository.getTime(uuid, t.getMap());
         String previousTimeFormatted = previousTime == null ? "N/A" : previousTime.toString();
-        return "&f" + previousTimeFormatted + " " + generateCircles(diff, previousTime) + " " + " &f" + timeFormatted;
+        lib.getMessagesAPI().sendActionbarMessage(
+                "&f" + previousTimeFormatted + " " + generateCircles(diff, previousTime) + " " + " &f" + timeFormatted,
+                Bukkit.getPlayer(uuid));
     }
 }
