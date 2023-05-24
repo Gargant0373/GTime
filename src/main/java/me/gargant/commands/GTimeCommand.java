@@ -1,8 +1,6 @@
 package me.gargant.commands;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.BlockBreakEvent;
 
 import masecla.mlib.annotations.RegisterableInfo;
 import masecla.mlib.annotations.SubcommandInfo;
@@ -18,7 +16,6 @@ import me.gargant.services.RunService;
 public class GTimeCommand extends Registerable {
 
     private RunService runService;
-    private GTimeAPI api = GTime.api();
 
     public GTimeCommand(MLib lib, RunService runService) {
         super(lib);
@@ -39,13 +36,5 @@ public class GTimeCommand extends Registerable {
     @SubcommandInfo(subcommand = "times", permission = "gtime.times")
     public void handleTimes(Player player) {
         lib.getContainerAPI().openFor(player, MapViewContainer.class);
-    }
-
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
-        Player player = event.getPlayer();
-
-        // getRunService() returns a RunService instance
-        api.getRunService().startRun(player.getUniqueId(), "myCoolMapName");
     }
 }
