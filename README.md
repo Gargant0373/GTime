@@ -1,4 +1,5 @@
 
+
 # GTime
 A Minecraft plugin to help you track your runs for parkour-like minigames. Currently it supports YML and SQL data storing.
 
@@ -8,6 +9,13 @@ The configuration file has 2 main fields you want to take a look at: the databas
 The *database* field can take 2 values: **sql** and **yml**. Using anything but these 2 will result in the plugin not working.
 
 The *sql* field can be ignored in case you're using yml. You'll need to fill in the the database information and make sure the database exists (tables are automatically created and you're encouraged to not touch them).
+
+## PAPI
+
+There's 2 PAPI hooks you can use: 
+
+* %gtimepapi_current_time% displays the current time for your run.
+* %gtimepapi_best_time_\<map\>% displays the best time for the map you provide.
 
 ## Commands
 The plugin has 2 commands so far:
@@ -27,7 +35,7 @@ Main command of the plugin.
 command will start the run for you for a specific map.
 - /gtime end \<map\> *(gtime.use)*
 command will end the run for you for a specific map.
-- /gtime times *(time.times)*
+- /gtime times *(gtime.times)*
 command will open a container displaying all of your previous runs.
 
 ## Contributing
