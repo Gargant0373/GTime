@@ -89,16 +89,28 @@ public class RunService extends Registerable {
      * Generates the action bar message for the running player
      */
     private void sendMessage(UUID uuid, Time t) {
+        String time = getCurrentTime(uuid);
         long diff = (System.currentTimeMillis() - t.getTime()) / 1000;
-        long m = diff / 60;
-        long s = diff - m * 60;
-        // Make the seconds and minutes be padded with
-        // 0s and displayed in the mm:ss format
-        String timeFormatted = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
         Time previousTime = previousTimes.get(uuid);
         String previousTimeFormatted = previousTime == null ? "N/A" : previousTime.toString();
         lib.getMessagesAPI().sendActionbarMessage(
-                "&f" + previousTimeFormatted + " " + generateCircles(diff, previousTime) + " " + " &f" + timeFormatted,
+                "&f" + previousTimeFormatted + " " + generateCircles(diff, previousTime) + " " + " &f" + time,
                 Bukkit.getPlayer(uuid));
+    }
+
+    /**
+     * Returns the current time of the player in their run.
+     * @param uuid the {@link UUID} to get the time from
+     * @return the current time of the player in their run
+     */
+    public String getCurrentTime(UUID uuid) {
+        Time t = running.get(uuid);
+        if(t == null) return "N/A";
+        long diff = (System.currentTimeMillis() - t.getTime());
+        
+        long s = (diff / 1000) % 60;
+        long m = (diff / (1000 * 60)) % 60;
+        
+        return String.format("%02d:%02d", m, s);
     }
 }

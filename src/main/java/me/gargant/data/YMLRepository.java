@@ -38,7 +38,10 @@ public class YMLRepository implements DataRepository {
 
     @Override
     public Time getTime(UUID uuid, String map) {
-        ConfigurationSection section = getSection(uuid).getConfigurationSection(map);
+        ConfigurationSection section = getSection(uuid);
+        if (section == null)
+            return null;
+        section = section.getConfigurationSection(map);
         if (section == null)
             return null;
         return new Time(map, section.getLong("time"), section.getLong("logged"));
@@ -57,13 +60,7 @@ public class YMLRepository implements DataRepository {
     }
 
     private ConfigurationSection getSection(UUID uuid) {
-        ConfigurationSection section = lib.getConfigurationAPI().getConfig("data")
+        return lib.getConfigurationAPI().getConfig("data")
                 .getConfigurationSection(uuid.toString().replace("-", ""));
-        if (section == null) {
-            lib.getConfigurationAPI().getConfig("data").set(uuid.toString().replace("-", ""), "");
-            section = lib.getConfigurationAPI().getConfig("data")
-                    .getConfigurationSection(uuid.toString().replace("-", ""));
-        }
-        return section;
     }
 }

@@ -10,6 +10,8 @@ import me.gargant.containers.MapViewContainer;
 import me.gargant.data.DataRepository;
 import me.gargant.data.SQLRepository;
 import me.gargant.data.YMLRepository;
+import me.gargant.placeholders.CurrentTimePlaceholder;
+import me.gargant.placeholders.MapPlaceholder;
 import me.gargant.services.RunService;
 
 public class GTime extends JavaPlugin {
@@ -36,6 +38,9 @@ public class GTime extends JavaPlugin {
         new MapViewContainer(lib, dataRepository).register();
 
         api = new GTimeAPI(dataRepository, runService); 
+
+        new CurrentTimePlaceholder(lib, runService).register();
+        new MapPlaceholder(lib, dataRepository).register();
 
         this.disableAntispam();
     }
