@@ -8,6 +8,7 @@ import me.gargant.commands.DebugCommand;
 import me.gargant.commands.GTimeCommand;
 import me.gargant.containers.MapViewContainer;
 import me.gargant.data.DataRepository;
+import me.gargant.data.MojangApiRepository;
 import me.gargant.data.SQLRepository;
 import me.gargant.data.YMLRepository;
 import me.gargant.placeholders.CurrentTimePlaceholder;
@@ -15,11 +16,12 @@ import me.gargant.placeholders.MapPlaceholder;
 import me.gargant.services.RunService;
 
 public class GTime extends JavaPlugin {
-    
+
     private MLib lib;
 
     private DataRepository dataRepository;
     private RunService runService;
+    private MojangApiRepository mojangApiRepository;
 
     private static GTimeAPI api;
 
@@ -31,13 +33,15 @@ public class GTime extends JavaPlugin {
         this.registerRepository();
         this.runService = new RunService(lib, dataRepository);
         this.runService.register();
+        
+        this.mojangApiRepository = new MojangApiRepository();
 
         new DebugCommand(lib, dataRepository).register();
-        new GTimeCommand(lib, runService).register();
+        new GTimeCommand(lib, runService, dataRepository, mojangApiRepository).register();
 
         new MapViewContainer(lib, dataRepository).register();
 
-        api = new GTimeAPI(dataRepository, runService); 
+        api = new GTimeAPI(dataRepository, runService);
 
         new CurrentTimePlaceholder(lib, runService).register();
         new MapPlaceholder(lib, dataRepository).register();
@@ -52,6 +56,9 @@ public class GTime extends JavaPlugin {
     private void disableAntispam() {
         lib.getMessagesAPI().setAntispamDelay("times.personal-best", 0);
         lib.getMessagesAPI().setAntispamDelay("times.finished", 0);
+        lib.getMessagesAPI().setAntispamDelay("leaderboard.message.header", 0);
+        lib.getMessagesAPI().setAntispamDelay("leaderboard.message.body", 0);
+        lib.getMessagesAPI().setAntispamDelay("leaderboard.message.footer", 0);
     }
 
     @Override
@@ -61,7 +68,7 @@ public class GTime extends JavaPlugin {
 
     private void registerRepository() {
         String type = lib.getConfigurationAPI().getConfig().getString("database", "null");
-        switch(type) {
+        switch (type) {
             case "sql":
                 this.dataRepository = new SQLRepository(lib);
                 lib.getLoggerAPI().information("Using SQL database.");

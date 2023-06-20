@@ -12,6 +12,7 @@ import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import masecla.mlib.main.MLib;
+import me.gargant.classes.LeaderboardItem;
 import me.gargant.classes.Time;
 
 @RequiredArgsConstructor
@@ -127,6 +128,33 @@ public class SQLRepository implements DataRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return times;
+    }
+
+    @Override
+    public List<LeaderboardItem> getTopTimes(String map) {
+        if (!initialized) {
+            lib.getLoggerAPI().error("SQL not initialized. Cancelling request for top times.");
+            return null;
+        }
+
+        List<LeaderboardItem> times = new ArrayList<>();
+
+        String query = "SELECT * FROM times WHERE map = ? ORDER BY time ASC LIMIT 10";
+
+        try {
+            PreparedStatement statement = (PreparedStatement) connection.prepareStatement(query);
+            statement.setString(1, map);
+            ResultSet set = statement.executeQuery();
+            while (set.next()) {
+                UUID uuid = UUID.fromString(set.getString("uuid"));
+                long time = set.getLong("time");
+                times.add(new LeaderboardItem(uuid, new Time(map, time)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return times;
     }
 

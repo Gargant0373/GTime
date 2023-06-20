@@ -9,9 +9,13 @@ import org.bukkit.entity.Player;
 import masecla.mlib.annotations.RegisterableInfo;
 import masecla.mlib.annotations.SubcommandInfo;
 import masecla.mlib.classes.Registerable;
+import masecla.mlib.classes.Replaceable;
 import masecla.mlib.main.MLib;
+import me.gargant.classes.LeaderboardItem;
 import me.gargant.classes.RunEnd;
 import me.gargant.containers.MapViewContainer;
+import me.gargant.data.DataRepository;
+import me.gargant.data.MojangApiRepository;
 import me.gargant.services.RunService;
 import net.md_5.bungee.api.ChatColor;
 
@@ -19,10 +23,15 @@ import net.md_5.bungee.api.ChatColor;
 public class GTimeCommand extends Registerable {
 
     private RunService runService;
+    private DataRepository dataRepository;
+    private MojangApiRepository mojangApiRepository;
 
-    public GTimeCommand(MLib lib, RunService runService) {
+    public GTimeCommand(MLib lib, RunService runService, DataRepository dataRepository,
+            MojangApiRepository mojangApiRepository) {
         super(lib);
         this.runService = runService;
+        this.dataRepository = dataRepository;
+        this.mojangApiRepository = mojangApiRepository;
     }
 
     @Override
@@ -62,5 +71,28 @@ public class GTimeCommand extends Registerable {
     @SubcommandInfo(subcommand = "times", permission = "gtime.times")
     public void handleTimes(Player player) {
         lib.getContainerAPI().openFor(player, MapViewContainer.class);
+    }
+
+    @SubcommandInfo(subcommand = "leaderboard", aliases = { "lb" }, permission = "gtime.leaderboard")
+    public void handleLeaderboard(CommandSender sender, String map) {
+        lib.getMessagesAPI().sendMessage("leaderboard.message.header", sender, new Replaceable("%map%", map));
+        List<LeaderboardItem> items = dataRepository.getTopTimes(map);
+
+        for (int i = 0; i < items.size(); i++) {
+            LeaderboardItem item = items.get(i);
+            String playerName = mojangApiRepository.getPlayerName(item.getUuid());
+
+            if(playerName == null) {
+                playerName = "Unknown";
+            }
+
+            lib.getMessagesAPI().sendMessage("leaderboard.message.body", sender,
+                    new Replaceable("%pos%", i + 1 + ""),
+                    new Replaceable("%player_name%", playerName),
+                    new Replaceable("%time%", item.getTime()));
+        }
+
+        lib.getMessagesAPI().sendMessage("leaderboard.message.footer", sender);
+
     }
 }

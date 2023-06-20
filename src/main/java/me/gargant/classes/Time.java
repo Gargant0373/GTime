@@ -26,9 +26,8 @@ public class Time {
         long ms = time % 1000;
         long s = (time / 1000) % 60;
         long m = (time / (1000 * 60)) % 60;
-        long h = (time / (1000 * 60 * 60)) % 24;
 
-        return String.format("%02d:%02d:%02d.%03d", h, m, s, ms);
+        return String.format("%02d:%02d.%03d", m, s, ms);
     }
 
     public Time clone() {

@@ -3,6 +3,7 @@ package me.gargant.data;
 import java.util.List;
 import java.util.UUID;
 
+import me.gargant.classes.LeaderboardItem;
 import me.gargant.classes.Time;
 
 public interface DataRepository {
@@ -35,5 +36,13 @@ public interface DataRepository {
      * @return a {@link List} of {@link Time} objects.
      */
     public List<Time> getAllTimes(UUID uuid);
+
+    /**
+     * Gets the 10 best times from the repository.
+     * 
+     * @param map the map to get the times from.
+     * @return a {@link List} of {@link Time} objects.
+     */
+    public List<LeaderboardItem> getTopTimes(String map);
 
 }
