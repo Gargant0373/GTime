@@ -1,22 +1,26 @@
 package me.gargant.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import masecla.mlib.classes.MamlConfiguration;
 import masecla.mlib.main.MLib;
 import me.gargant.classes.LeaderboardItem;
 import me.gargant.classes.Time;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class YMLRepository implements DataRepository {
 
+    @NonNull
     private MLib lib;
 
     @Override
@@ -31,6 +35,19 @@ public class YMLRepository implements DataRepository {
 
     @Override
     public void saveTime(UUID uuid, Time time) {
+        /// Cache updating
+        if(cache.containsKey(time.getMap())) {
+            List<LeaderboardItem> items = cache.get(time.getMap());
+
+            /// Checking if the time is better than the last one
+            if(items.get(items.size() - 1).getTime().getTime() > time.getTime()) {
+                // Adding new one and sorting, then removing worst one.
+                items.add(new LeaderboardItem(uuid, time));
+                items.sort((a, b) -> (int) (a.getTime().getTime() - b.getTime().getTime()));
+                items.remove(items.size() - 1);
+            }
+        }
+
         MamlConfiguration config = lib.getConfigurationAPI().getConfig("data");
         String path = time.getMap() + "." + uuid.toString();
         config.set(path + ".time", time.getTime());
@@ -47,7 +64,8 @@ public class YMLRepository implements DataRepository {
         if (section == null)
             return null;
         Time t = new Time(map, section.getLong("time"), section.getLong("logged"));
-        if(t.getTime() == 0) return null;
+        if (t.getTime() == 0)
+            return null;
         return t;
     }
 
@@ -61,10 +79,11 @@ public class YMLRepository implements DataRepository {
             if (section == null)
                 continue;
             section = section.getConfigurationSection(uuid.toString());
-            if(section == null)
+            if (section == null)
                 continue;
             Time t = new Time(map, section.getLong("time"), section.getLong("logged"));
-            if(t.getTime() == 0) continue;
+            if (t.getTime() == 0)
+                continue;
             times.add(t);
         }
         return times;
@@ -79,13 +98,25 @@ public class YMLRepository implements DataRepository {
                 .getConfigurationSection(map);
     }
 
+    private Map<String, List<LeaderboardItem>> cache = new HashMap<>();
+    private Map<String, Long> cacheTime = new HashMap<>();
+
     @Override
     public List<LeaderboardItem> getTopTimes(String map) {
+        if (cache.containsKey(map)) {
+            if (System.currentTimeMillis() - cacheTime.get(map) < cacheTime() * 1000) {
+                return cache.get(map);
+            }
+            cache.remove(map);
+            cacheTime.remove(map);
+        }
+
         ConfigurationSection section = getSection(map);
         if (section == null)
             return new ArrayList<>();
-        List<UUID> registeredPlayers = section.getKeys(false).stream().map(c -> UUID.fromString(c)).collect(Collectors.toList());
-        
+        List<UUID> registeredPlayers = section.getKeys(false).stream().map(c -> UUID.fromString(c))
+                .collect(Collectors.toList());
+
         TreeMap<Long, UUID> times = new TreeMap<>();
 
         for (UUID player : registeredPlayers) {
@@ -93,14 +124,25 @@ public class YMLRepository implements DataRepository {
         }
 
         List<LeaderboardItem> items = new ArrayList<>();
-        for(int i=0;i<10;i++) {
-            if(times.isEmpty()) break;
+        for (int i = 0; i < leaderboardSize(); i++) {
+            if (times.isEmpty())
+                break;
             Long time = times.firstKey();
             UUID uuid = times.get(time);
             items.add(new LeaderboardItem(uuid, getTime(uuid, map)));
             times.remove(time);
         }
 
+        cache.put(map, items);
+        cacheTime.put(map, System.currentTimeMillis());
         return items;
+    }
+
+    private int cacheTime() {
+        return lib.getConfigurationAPI().getConfig().getInt("leaderboard.cache-time", 300);
+    }
+
+    private int leaderboardSize() {
+        return lib.getConfigurationAPI().getConfig().getInt("leaderboard.size", 10);
     }
 }

@@ -19,3 +19,10 @@ sql:
   database: gtimes
   username: root
   password: ''
+
+#   Leaderboard settings
+leaderboard:
+#  How many players to display on the leaderboard from the command
+  size: 10 
+#  Cache time in seconds (not really relevant, works only for yml)
+  cache-time: 300

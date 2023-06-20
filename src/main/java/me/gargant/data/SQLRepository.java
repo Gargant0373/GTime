@@ -140,7 +140,7 @@ public class SQLRepository implements DataRepository {
 
         List<LeaderboardItem> times = new ArrayList<>();
 
-        String query = "SELECT * FROM times WHERE map = ? ORDER BY time ASC LIMIT 10";
+        String query = "SELECT * FROM times WHERE map = ? ORDER BY time ASC LIMIT " + leaderboardSize();
 
         try {
             PreparedStatement statement = (PreparedStatement) connection.prepareStatement(query);
@@ -156,6 +156,10 @@ public class SQLRepository implements DataRepository {
         }
 
         return times;
+    }
+
+    private int leaderboardSize() {
+        return lib.getConfigurationAPI().getConfig().getInt("leaderboard.size", 10);
     }
 
 }

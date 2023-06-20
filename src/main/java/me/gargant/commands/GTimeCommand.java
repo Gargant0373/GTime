@@ -73,10 +73,20 @@ public class GTimeCommand extends Registerable {
         lib.getContainerAPI().openFor(player, MapViewContainer.class);
     }
 
+    @SubcommandInfo(subcommand = "leaderboard", aliases = {"lb"}, permission = "gtime.leaderboard")
+    public void handleLeaderboardHelp(CommandSender sender) {
+        lib.getMessagesAPI().sendMessage("leaderboard.message.help", sender);
+    }
+
     @SubcommandInfo(subcommand = "leaderboard", aliases = { "lb" }, permission = "gtime.leaderboard")
     public void handleLeaderboard(CommandSender sender, String map) {
-        lib.getMessagesAPI().sendMessage("leaderboard.message.header", sender, new Replaceable("%map%", map));
         List<LeaderboardItem> items = dataRepository.getTopTimes(map);
+        if(items == null || items.size() == 0) {
+            lib.getMessagesAPI().sendMessage("leaderboard.message.no-map", sender);
+            return;
+        }
+
+        lib.getMessagesAPI().sendMessage("leaderboard.message.header", sender, new Replaceable("%map%", map));
 
         for (int i = 0; i < items.size(); i++) {
             LeaderboardItem item = items.get(i);
