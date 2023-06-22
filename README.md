@@ -37,6 +37,8 @@ command will start the run for you for a specific map.
 command will end the run for you for a specific map.
 - /gtime times *(gtime.times)*
 command will open a container displaying all of your previous runs.
+- /gtime leaderboard \<map\> *(gtime.leaderboard)*
+Shows a leaderboard for a certain map.
 
 ## Contributing
 These plugins are made open-source and free to use so any help is appreciated. If you want to contribute feel free to create a pull request. Not respecting the Java standards or having a poor code quality might lead to your PR being rejected. 
