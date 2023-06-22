@@ -33,7 +33,7 @@ public class GTime extends JavaPlugin {
         this.registerRepository();
         this.runService = new RunService(lib, dataRepository);
         this.runService.register();
-        
+
         this.mojangApiRepository = new MojangApiRepository();
 
         new DebugCommand(lib, dataRepository).register();
